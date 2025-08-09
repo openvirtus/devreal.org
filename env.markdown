@@ -95,6 +95,10 @@ your scripts.
 
 Some programs already use BROWSER. Use EXPLORER for opening paths.
 
+    ${EXPLORER:-xdg-open} /path/to/file
+
+## Scripts
+
 ### `SUDO`
 
 When an elevated command is required do this:
@@ -108,6 +112,20 @@ command as root. You can perform a check:
         echo 'error: Run this script as root os set $SUDO.' >&2
         exit 1
     fi
+
+### `EDITOR` (POSIX)
+
+The text editor to use. According to POSIX `VISUAL` should be used
+before `EDITOR`, but we use `EDITOR` only.
+
+    ${EDITOR:-vi} /etc/hosts
+
+### `XEDITOR`
+
+The graphical text editor to use. Graphical programs should call `XEDITOR`
+and terminal programs should call `EDITOR`.
+
+    ${XEDITOR:-xterm -e ${EDITOR:-vi}} /etc/hosts
 
 ## More...
 
