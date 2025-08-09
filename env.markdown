@@ -85,7 +85,7 @@ engineer's life miserable. The programmer can write scripts that honour
 
     curl -o /tmp/file.tar ${PROXY_URL:+ -x "${PROXY_URL}" } https://url
 
-### `BROWSER`
+### `BROWSER` and `EXPLORER`
 
 Instead of calling `xdg-open(1)` directly allow changing the browser in
 your scripts.
@@ -93,7 +93,21 @@ your scripts.
     #!/bin/sh -e
     ${BROWSER:-xdg-open} https://...
 
-Some programs already use BROWSER.
+Some programs already use BROWSER. Use EXPLORER for opening paths.
+
+### `SUDO`
+
+When an elevated command is required do this:
+
+    ${SUDO:-env} COMMAND
+
+Then the user can set SUDO to `sudo -n` or `doas -n` or execute the
+command as root. You can perform a check:
+
+    if ${SUDO:-env} test -w /bin/sh; then
+        echo 'error: Run this script as root os set $SUDO.' >&2
+        exit 1
+    fi
 
 ## More...
 
