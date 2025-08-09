@@ -3,9 +3,10 @@ layout: page
 title: Terminal tools for a real sustained development.
 ---
 
-Modern software development feels like chasing smoke — frameworks rise
+Modern software development feels like chasing smoke, frameworks rise
 and fall, GUIs shift faster than we can learn them, and the tools we
-depend on are often opaque, bloated, or short-lived.
+depend on are often opaque, bloated, or short-lived. *Real development*
+seems impossible, not lasting.
 
 At `/dev/real`, we reject this cycle. We believe the future doesn’t lie
 in ever more complex interfaces, but in returning to something older
