@@ -54,5 +54,6 @@ termina-plex:
   date_format: "%Y %m %d"
   hostname: /dev/real
   header_links:
+#    - { name: Tar, url: "/tar" }
     - { name: Style, url: "/style" }
     - { name: EnvVar, url: "/env" }

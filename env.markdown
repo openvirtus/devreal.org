@@ -77,13 +77,11 @@ Example:
         
 ## The World Wide Web WWW (CURL, ...)
 
-### `PROXY_URL`
+### `HTTP_GET`
 
-Some organizations have corporate firewalls and proxies that make the
-engineer's life miserable. The programmer can write scripts that honour
-`$PROXY_URL`, then with curl:
+Allow changing the downloading program in your scripts:
 
-    curl -o /tmp/file.tar ${PROXY_URL:+ -x "${PROXY_URL}" } https://url
+    ${HTTP_GET:-curl -fL -o} /tmp/file.tar https://url
 
 ### `BROWSER` and `EXPLORER`
 
@@ -97,7 +95,7 @@ Some programs already use BROWSER. Use EXPLORER for opening paths.
 
     ${EXPLORER:-xdg-open} /path/to/file
 
-## Scripts
+## Text editor and elevation
 
 ### `SUDO`
 
