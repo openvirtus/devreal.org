@@ -25,8 +25,6 @@ This document is, therefore, an invitation: to think of the environment
 as shared space, to reduce friction between tools, and to build a culture
 of integration that is free, simple, and cooperative.
 
-## Tier 1 - Recommended
-
 ### `GIT_*` - Git environment variables {#GIT_}
 
 When writing scripts that operate with git use `git config` or the
@@ -99,8 +97,6 @@ The password manager to use. For example:
         exit 1
     fi
 
-## # Tier 2 - Suggested
-
 ### `PROXY_URL` - Proxy URL {#PROXY_URL}
 
 The URL of the proxy server to use for network requests. For example:
@@ -118,13 +114,13 @@ The directory where applications should store their cache files. For example:
     
 Applications can read this variable to determine where to store
 
-## `COORDINATES` - Default map coordinates {#COORDINATES}
+### `COORDINATES` - Default map coordinates {#COORDINATES}
 
 The default latitude and longitude to use in mapping applications.
 
     export COORDINATES="37.7749,-122.4194"  # San Francisco, CA
 
-## `DICTIONARY,SPELL_CHECKER` - Spell checker and dictionary {#DICTIONARY} {#SPELL_CHECKER}
+### `SPELL_CHECKER` - Spell checker and dictionary {#SPELL_CHECKER}
 
 The default dictionary to use for spell checking and word lookups.
 
@@ -132,7 +128,11 @@ The default dictionary to use for spell checking and word lookups.
     
     ${SPELL_CHECKER:-hunspell} document.txt
 
-## `TRASH_CODE` - Command for trashing source files {#TRASH_CODE}
+### `DICTIONARY` - Default dictionary {#DICTIONARY}
+
+Spell checkers and dictionary lookup tools can read this variable.
+
+### `TRASH_CODE` - Command for trashing source files {#TRASH_CODE}
 
 The spell checker command to use for checking spelling in documents.
 
