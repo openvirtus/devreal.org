@@ -52,7 +52,7 @@ This allows to create bundles.
 
 Shell scripts:
 
-    if test @"${SCRNAME:-$(basename "$0")}" = @"my-program"; then
+    if test @"${0##*/}" = @"my-program"; then
         ...
     fi
 
@@ -75,13 +75,13 @@ instead. Print the trace if DEBUG environment variable is set.
 
 ### A working Makefile or GNUmakefile.
 
-All makefiles shall support `all` and `install`. The `install` target
+All make files shall support `all` and `install`. The `install` target
 shall not depend on `all` so that `sudo make install` works.
 
-If the makefile is POSIX compatible, name it Makefile, otherwise
-name it GNUmakefile.
+If the make file is POSIX compatible, name it "Makefile", otherwise
+name it "GNUmakefile".
 
-All makefiles shall support `DESTDIR` and `PREFIX` to specify the
+All make files shall support `DESTDIR` and `PREFIX` to specify the
 installation target.
 
 ## Scripting programming languages
@@ -99,7 +99,7 @@ The general template:
     my_program() {
         ...
     }
-    if test @"${SCRNAME:-$(basename "$0")}" = @"my-program"; then
+    if test @"${0##*/}" = @"my-program"; then
         case "${1}" in
             ''|-h|--help) sed -n 's/^ *#h: \{0,1\}//p' "$0";;
             -V)           true;;

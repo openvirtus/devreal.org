@@ -5,10 +5,10 @@ title: Notes
 
 ## pciutils
 
-- Ms Windows [here](https://eternallybored.org/misc/pciutils).
+- MS Windows [here](https://eternallybored.org/misc/pciutils).
 - GNU/Linux [here](https://mj.ucw.cz/sw/pciutils/).
 
-## xterm
+## XTerm
 
 - _(xterm.01)_ When used with tmux specify `-si` to disable the scroll.
 

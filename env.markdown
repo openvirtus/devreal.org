@@ -64,7 +64,7 @@ When an elevated command is required write this:
 
 Do not hardcode `sudo` or `doas`, if the user wants to allow elevation
 to programs they can set the `SUDO` variable `sudo -n` or `doas -n`.
-By default the command is not elevated.
+By default, the command is not elevated.
 
 Perform a check before running commands that require root privileges:
 
@@ -137,6 +137,34 @@ Spell checkers and dictionary lookup tools can read this variable.
 The spell checker command to use for checking spelling in documents.
 
     ${TRASH_CODE:-rm -f} /path/to/file.txt
+
+### `DMENU` - Graphical selection command {#DMENU}
+
+The command to use for dmenu-like selection prompts.
+
+    selection="$(${DMENU:-dmenu -i -l 10} <<-EOF
+    	Option 1
+    	Option 2
+    EOF
+    )"
+
+### `PDF_READER` - PDF reader {#PDF_READER}
+
+The command to use for opening PDF files.
+
+    ${PDF_READER:-xdg-open} /path/to/file.pdf
+
+### `PAGER` - Default pager {#PAGER}
+
+The command to use for paging through text output.
+
+    ${PAGER:-less} /path/to/logfile.log
+
+### `TERMINAL` - Default terminal emulator {#TERMINAL}
+
+The command to use for opening terminal emulators.
+
+    ${TERMINAL:-xterm} -e htop
 
 ## More...
 
