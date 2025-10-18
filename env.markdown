@@ -4,126 +4,139 @@ title: Environment Variables
 permalink: /env
 ---
 
-The purpose of this document is to help to homogenize the environment variable
-names used by the programs that use our [style guide](/style).
+In the free software ecosystem, interoperability depends not only on
+code but also on the shared language that tools use to communicate.
+Environment variables are one of the simplest and most powerful parts
+of that language: they allow different programs to work together
+without hard-coded settings or rigid dependencies.
 
-## Definitions
+Over time, however, multiple parallel conventions have emerged — sometimes
+incompatible — making integration harder than it should be. This proposal
+aims to restore the original *idea of environment variables* as a universal
+interface: a minimal, coherent set of standardized names that any free
+software tool can recognize and respect.
 
-- Script/program : In this document both are considered equal. Both programs
-  and scripts can read environment variables.
+The goal is not to impose a standard, but to offer a common ground.
+By agreeing on how to name the text editor `EDITOR` or the password
+manager `PASS` we strengthen both user autonomy and cross-project
+compatibility.
 
-- The programmer : Is the person that writes the programs that read the
-  environment variables. He/she wants to share this program.
+This document is, therefore, an invitation: to think of the environment
+as shared space, to reduce friction between tools, and to build a culture
+of integration that is free, simple, and cooperative.
 
-- The operator : Is the one setting the environment variables for configuring
-  the programs. He/she writes the config-scripts too, normally not shared.
+## Tier 1 - Recommended
 
-- config-scripts : Programs can call scripts defined by the operator "config scripts"
-  when some dynamic behaviour is required. Check [$SSH_H_LIST](#SSH_H_LIST) for
-  an example.
+### `GIT_*` - Git environment variables {#GIT_}
 
-## Git - Version Control System
+When writing scripts that operate with git use `git config` or the
+environment variables defined [here](https://git-scm.com/book/en/v2/Git-Internals-Environment-Variables).
+For example:
 
-Official environment variables [here](https://git-scm.com/book/en/v2/Git-Internals-Environment-Variables).
+    email="$(git config user.email 2>/dev/null || echo "${GIT_AUTHOR_EMAIL}")"
 
-When writing scripts that operate with git use `git config`.
+### `HTTP_GET` - Default downloader {#HTTP_GET}
 
-    #!/bin/sh -e
-    email="$(git config myscript.config 2>/dev/null || echo default_value)"
-    ...
-
-## OpenSSH - Connectivity tool for remote login
-
-A machine : A machine is what the ssh(1) man page regards to "destination", it
-is usually `user@host`, but the operator can configure names in the `~/.ssh/config`
-file as:
-
-    Host qemu1
-        HostName 127.0.0.1
-        User root
-        Port 23101
-
-Then get the settings with:
-
-    #!/bin/sh -e
-    addr="$(ssh -G qemu1 | sed 's|^hostname  *||p')"
-    ping "$addr"
-
-### `SSH_H_LIST`
-
-Scripts that want to receive multiple ssh hostnames should call the program
-defined in this environment variable to receive the list.
-
-Example:
-
-    [/src/operator/bin/list_machines]
-    #!/bin/sh -e
-    IFS=','
-    for n in $1; do
-        case "$1" in 
-            l)    echo >&2 "Machines: lab1 lab2"; exit 1;;
-            lab1) echo "m1,m2,m3";;
-            lab2) echo "user1@pc1,user2@172.90.20.13";;
-            *)    echo "$1";;
-        esac
-    done
-
-    [/src/programmer/bin/ssh-h-something]
-    #!/bin/sh -e
-    for m in $(${SSH_H_LIST:-echo} "$1" | tr ',' ' '); do
-        echo "== $m"
-        ssh "$m" "OPERATIONS..."
-    done
-        
-## The World Wide Web WWW (CURL, ...)
-
-### `HTTP_GET`
-
-Allow changing the downloading program in your scripts:
+Allow changing the downloader in your scripts.
 
     ${HTTP_GET:-curl -fL -o} /tmp/file.tar https://url
 
-### `BROWSER` and `EXPLORER`
+This way someone using OpenBSD can set `HTTP_GET="ftp -o"` or someone
+using wget can set `HTTP_GET="wget -O"`.
+
+### `BROWSER` - Default browser {#BROWSER}
 
 Instead of calling `xdg-open(1)` directly allow changing the browser in
-your scripts.
+your scripts or programs.
 
     #!/bin/sh -e
     ${BROWSER:-xdg-open} https://...
+
+### `EXPLORER` - Default file explorer {#EXPLORER}
 
 Some programs already use BROWSER. Use EXPLORER for opening paths.
 
     ${EXPLORER:-xdg-open} /path/to/file
 
-## Text editor and elevation
+### `SUDO` - Elevation command {#SUDO}
 
-### `SUDO`
-
-When an elevated command is required do this:
+When an elevated command is required write this:
 
     ${SUDO:-env} COMMAND
 
-Then the user can set SUDO to `sudo -n` or `doas -n` or execute the
-command as root. You can perform a check:
+Do not hardcode `sudo` or `doas`, if the user wants to allow elevation
+to programs they can set the `SUDO` variable `sudo -n` or `doas -n`.
+By default the command is not elevated.
+
+Perform a check before running commands that require root privileges:
 
     if ${SUDO:-env} test -w /bin/sh; then
         echo 'error: Run this script as root os set $SUDO.' >&2
         exit 1
     fi
 
-### `EDITOR` (POSIX)
+### `EDITOR` - Default text editor {#EDITOR}
 
 The text editor to use. According to POSIX `VISUAL` should be used
 before `EDITOR`, but we use `EDITOR` only.
 
     ${EDITOR:-vi} /etc/hosts
 
-### `XEDITOR`
+### `XEDITOR` - Default graphical text editor {#XEDITOR}
 
 The graphical text editor to use. Graphical programs should call `XEDITOR`
 and terminal programs should call `EDITOR`.
 
     ${XEDITOR:-xterm -e ${EDITOR:-vi}} /etc/hosts
+
+### `PASS` - Default password manager {#PASS}
+
+The password manager to use. For example:
+
+    password="$(${PASS:-pass} ${ACCOUNT_WEBSITE:-website.com/user})"
+    if test ! -n "$password"; then
+        echo 'error: Password not found in the password manager.' >&2
+        exit 1
+    fi
+
+## # Tier 2 - Suggested
+
+### `PROXY_URL` - Proxy URL {#PROXY_URL}
+
+The URL of the proxy server to use for network requests. For example:
+
+    export PROXY_URL="http://proxy.example.com:8080"
+
+Downloaders and other network tools can read this variable to configure
+their proxy settings.
+
+### `CACHE_DIR` - Cache directory {#CACHE_DIR}
+
+The directory where applications should store their cache files. For example:
+
+    cache_dir="${CACHE_DIR:-$HOME/.cache}/myapp
+    
+Applications can read this variable to determine where to store
+
+## `COORDINATES` - Default map coordinates {#COORDINATES}
+
+The default latitude and longitude to use in mapping applications.
+
+    export COORDINATES="37.7749,-122.4194"  # San Francisco, CA
+
+## `DICTIONARY,SPELL_CHECKER` - Spell checker and dictionary {#DICTIONARY} {#SPELL_CHECKER}
+
+The default dictionary to use for spell checking and word lookups.
+
+    export DICTIONARY="en_US"
+    
+    ${SPELL_CHECKER:-hunspell} document.txt
+
+## `TRASH_CODE` - Command for trashing source files {#TRASH_CODE}
+
+The spell checker command to use for checking spelling in documents.
+
+    ${TRASH_CODE:-rm -f} /path/to/file.txt
 
 ## More...
 
